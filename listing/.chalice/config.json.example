@@ -1,0 +1,13 @@
+{
+  "version": "2.0",
+  "app_name": "listing",
+  "stages": {
+    "dev": {
+      "api_gateway_stage": "api",
+      "environment_variables":{
+          "ARN": "<SOME VALUE>",
+          "CHALICE_PASSWORD": "<SOME VALUE>"
+        }
+    }
+  }
+}
