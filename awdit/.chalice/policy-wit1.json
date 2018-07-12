@@ -9,6 +9,14 @@
         "logs:PutLogEvents"
       ],
       "Resource": "arn:aws:logs:*:*:*"
+    },
+    {
+      "Sid": "PermitAssumeRole",
+      "Action": [
+        "sts:AssumeRole"
+      ],
+      "Effect": "Allow",
+      "Resource": "arn:aws:iam::196314789624:role/listing-nuvops-CCRole-TQFS6NRTPWHG"
     }
   ]
 }

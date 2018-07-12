@@ -1,3 +1,4 @@
 #!/bin/bash
 
-chalice deploy --no-autogen-policy
+chalice deploy --stage wit1 --no-autogen-policy
+chalice deploy --stage avenida --no-autogen-policy

@@ -4,7 +4,7 @@ import logging
 import boto3
 from botocore.exceptions import ClientError
 from chalicelib.aws import ec2_list,health
-app = Chalice(app_name='listing')
+app = Chalice(app_name='awdit')
 
 # Enable DEBUG logs.
 app.log.setLevel(logging.DEBUG)
