@@ -3,7 +3,7 @@ import json
 import logging
 import boto3
 from botocore.exceptions import ClientError
-from chalicelib.aws import ec2_list
+from chalicelib.aws import ec2_list,health
 app = Chalice(app_name='listing')
 
 # Enable DEBUG logs.
@@ -12,17 +12,20 @@ app.log.setLevel(logging.DEBUG)
 
 @app.route('/')
 def index():
-    return test()
+    return health()
 
-@app.route('/report')
+@app.route('/ec2-list')
 def report():
-
     return ec2_list()
 
-    # try:
-    #     return ec2_list()
-    # except KeyError:
-    #     raise chalice.BadRequestError('item no encontrado')
+
+@app.route('/health')
+def health_fn():
+    return health()
+
+
+# @app.route('/cloudwatch', methods=['POST'])
+# def cloudwatch
 
 
 # The view function above will return {"hello": "world"}
