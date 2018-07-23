@@ -3,6 +3,8 @@ import logging
 import json
 import os
 from botocore.exceptions import ClientError
+from datetime import datetime, timedelta
+
 
 
 def health():
@@ -59,15 +61,47 @@ def ec2_list():
         #return {'error':e.response['Error']['Message']}
 
 
-# def cw_metrics(region):
-#
-#     ARN = os.environ['ARN']
-#     external_id = os.environ['EXTERNAL_ID']
-#
-#     try:
-#         client = boto3.client('sts')
-#         response = client.assume_role(RoleArn=ARN,RoleSessionName='listing',ExternalId=external_id)
-#         session = boto3.session.Session(aws_access_key_id=response['Credentials']['AccessKeyId'], \
-#                 aws_secret_access_key=response['Credentials']['SecretAccessKey'], aws_session_token=response['Credentials']['SessionToken'])
-#
-#         cw = session.resource('cloudwatch',region)
+def cw_metrics(instance_id):
+
+    ARN = os.environ['ARN']
+    external_id = os.environ['EXTERNAL_ID']
+
+    try:
+        client = boto3.client('sts')
+        response = client.assume_role(RoleArn=ARN,RoleSessionName='listing',ExternalId=external_id)
+        session = boto3.session.Session(aws_access_key_id=response['Credentials']['AccessKeyId'], \
+                aws_secret_access_key=response['Credentials']['SecretAccessKey'], aws_session_token=response['Credentials']['SessionToken'])
+
+        client = session.client('cloudwatch')
+        ec2 = session.client('ec2')
+        e = ec2.describe_instances(InstanceIds=[instance_id])
+        instance_name = e['Reservations'][0]['Instances'][0]['Tags']
+        instance_tag_name = 'none'
+        for i in range(len(instance_name)):
+            if instance_name[i]['Key'] == 'Name':
+                instance_tag_name = instance_name[i]['Value']
+
+        response = client.get_metric_statistics(
+            Namespace='AWS/EC2',
+            Dimensions=[
+                {
+                    'Name': 'InstanceId',
+                    'Value': instance_id
+                }
+            ],
+            MetricName='CPUUtilization',
+            StartTime=datetime.utcnow() - timedelta(seconds=600),
+            EndTime=datetime.utcnow(),
+            #2minutes
+            Period=120,
+            Statistics=[
+                'Average'])
+
+        return {
+                instance_tag_name:
+                {
+                'CPUUtilization': response['Datapoints'][0]['Average']
+                }}
+
+    except ClientError as e:
+        return {'error':e.response['Error']['Message']}

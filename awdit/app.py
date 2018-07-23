@@ -3,7 +3,7 @@ import json
 import logging
 import boto3
 from botocore.exceptions import ClientError
-from chalicelib.aws import ec2_list,health
+from chalicelib.aws import ec2_list,health, cw_metrics
 app = Chalice(app_name='awdit')
 
 # Enable DEBUG logs.
@@ -24,8 +24,9 @@ def health_fn():
     return health()
 
 
-# @app.route('/cloudwatch', methods=['POST'])
-# def cloudwatch
+@app.route('/cloudwatch/{instance_id}')
+def cloudwatch(instance_id):
+    return cw_metrics(instance_id)
 
 
 # The view function above will return {"hello": "world"}
