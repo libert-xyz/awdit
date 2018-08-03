@@ -98,10 +98,9 @@ def cw_metrics(instance_id):
                 'Average'])
 
         return {
-                instance_tag_name:
-                {
+                'Name': instance_tag_name,
                 'CPUUtilization': response['Datapoints'][0]['Average']
-                }}
+                }
 
     except ClientError as e:
         return {'error':e.response['Error']['Message']}
